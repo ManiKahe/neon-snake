@@ -7,8 +7,7 @@
   <title>Neon Snake</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-    :root{color-scheme:dark;--lime:#b8ff65;--muted:#9aa7b7;--panel:#111a25;--panel-2:#101822;--screen:#080c13;--edge:#263342;--danger:#ff527d;--shadow:rgba(154,255,99,.25);--retro-1:#ff4d9d;--retro-2:#ffb703;--retro-3:#7ef9ff;--retro-4:#7dff61;--retro-5:#9d7bff;--retro-6:#ff7b54}
+    :root{color-scheme:dark;--lime:#b8ff65;--muted:#9aa7b7;--panel:#111a25;--panel-2:#101822;--screen:#080c13;--edge:#263342;--danger:#ff527d;--shadow:rgba(154,255,99,.25);--retro-1:#ff4d9d;--retro-2:#ff8d4d;--retro-3:#ffe66d;--retro-4:#7ef9ff;--retro-5:#9d7bff}
     *{box-sizing:border-box}
     html,body{margin:0;background:var(--screen);color:#f3f6f8;font-family:Inter,system-ui,Arial,sans-serif;min-height:100vh}
     body{display:flex;justify-content:center}
@@ -20,23 +19,22 @@
     .primary{background:var(--lime);color:#11190b;padding:13px 25px;box-shadow:0 10px 24px rgba(184,255,101,.25)}
     .brand{font-size:12px;letter-spacing:2px;font-weight:800;color:var(--lime)}
     .sub{font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:3px}
-    .retro-header{position:relative;width:min(100%, 560px);margin:18px auto 8px;padding:14px 12px 10px;text-align:center;z-index:2}
-    .retro-header::before{content:"";position:absolute;inset:6px 0 auto;display:block;height:calc(100% - 10px);border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(0,0,0,0));border:1px solid rgba(255,255,255,.05);pointer-events:none}
-    .retro-title{position:relative;margin:0;display:flex;flex-wrap:wrap;justify-content:center;gap:10px 14px;line-height:1.15;text-transform:uppercase;font-family:'Press Start 2P', monospace;font-size:clamp(1rem, 2.7vw, 2.2rem);letter-spacing:0.08em;filter:drop-shadow(0 3px 0 rgba(0,0,0,.7));}
-    .retro-title .rainbow{display:inline-block;padding:8px 10px;border-radius:8px;position:relative;background:linear-gradient(90deg,var(--retro-1),var(--retro-2),var(--retro-3),var(--retro-4),var(--retro-5),var(--retro-6));-webkit-background-clip:text;background-clip:text;color:transparent;animation:rainbowShift 4s linear infinite;background-size:200% 100%;text-shadow:0 0 18px rgba(255,255,255,.3), 0 4px 0 rgba(0,0,0,.8);}
-    .retro-title .rainbow::before{content:attr(data-text);position:absolute;inset:0;z-index:-1;color:rgba(0,0,0,.7);transform:translate(4px,4px);filter:blur(0);text-shadow:0 0 10px rgba(0,0,0,.8);}
+    .retro-header{position:relative;width:min(100%,560px);margin:18px auto 8px;padding:14px 12px 10px;text-align:center;z-index:2}
+    .retro-header::before{content:"";position:absolute;inset:6px 0 auto;display:block;height:calc(100% - 10px);border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(0,0,0,.05));border:1px solid rgba(255,255,255,.05)}
+    .retro-title{position:relative;margin:0;display:flex;flex-wrap:wrap;justify-content:center;gap:10px 14px;line-height:1.15;text-transform:uppercase;font-family:'Press Start 2P',monospace;font-size:clamp(.6rem,3vw,1.1rem);letter-spacing:.12em}
+    .retro-title .rainbow{display:inline-block;padding:8px 10px;border-radius:8px;position:relative;background:linear-gradient(90deg,var(--retro-1),var(--retro-2),var(--retro-3),var(--retro-4),var(--retro-5));color:#111;box-shadow:0 0 18px rgba(255,255,255,.08)}
+    .retro-title .rainbow::before{content:attr(data-text);position:absolute;inset:0;z-index:-1;color:rgba(0,0,0,.7);transform:translate(4px,4px);filter:blur(0);text-shadow:0 0 10px rgba(0,0,0,.8)}
     .retro-title .rainbow:nth-child(2){animation-delay:.25s}
     .retro-title .rainbow:nth-child(3){animation-delay:.5s}
-    .retro-subtitle{margin-top:16px;font-family:'Press Start 2P', monospace;font-size:clamp(.5rem, 1.85vw, .8rem);letter-spacing:.12em;color:#fdf7ff;text-transform:uppercase;opacity:.9;text-shadow:0 0 14px rgba(155,255,195,.35), 0 2px 0 rgba(0,0,0,.7)}
-    .pixel-star{position:absolute;width:8px;height:8px;background:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.3);transform:rotate(45deg);animation:twinkle 1.7s ease-in-out infinite alternate;opacity:.9}
-    .pixel-star:before,.pixel-star:after{content:"";position:absolute;background:inherit;}
+    .retro-subtitle{margin-top:16px;font-family:'Press Start 2P',monospace;font-size:clamp(.5rem,1.85vw,.8rem);letter-spacing:.12em;color:#fdf7ff;text-transform:uppercase;opacity:.9;text-shadow:0 0 10px rgba(133,255,255,.3)}
+    .pixel-star{position:absolute;width:8px;height:8px;background:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.3);transform:rotate(45deg);animation:twinkle 1.7s ease-in-out infinite alternate;opacity:.85}
+    .pixel-star:before,.pixel-star:after{content:"";position:absolute;background:inherit}
     .pixel-star:before{inset:-3px 0 0 0;background:transparent;box-shadow:0 0 0 1px rgba(255,255,255,.18)}
     .pixel-star:nth-child(1){left:10%;top:10%;background:#fffc7a;animation-delay:.2s}
     .pixel-star:nth-child(2){right:14%;top:20%;background:#7ef9ff;animation-delay:.7s}
     .pixel-star:nth-child(3){left:18%;bottom:25%;background:#ff7b54;animation-delay:1.2s}
     .pixel-star:nth-child(4){right:18%;bottom:18%;background:#9d7bff;animation-delay:.9s}
     .pixel-star:nth-child(5){left:50%;top:4%;background:#7dff61;animation-delay:1.5s}
-    @keyframes rainbowShift{0%{filter:hue-rotate(0deg) brightness(1)}25%{filter:hue-rotate(30deg) brightness(1.1)}50%{filter:hue-rotate(90deg) brightness(1.2)}75%{filter:hue-rotate(160deg) brightness(1.1)}100%{filter:hue-rotate(220deg) brightness(1)}}
     @keyframes twinkle{0%{transform:rotate(45deg) scale(.75);opacity:.4}100%{transform:rotate(45deg) scale(1.2);opacity:1}}
     .welcome-screen{position:fixed;inset:0;display:grid;place-items:center;background:radial-gradient(circle at top,#102130 0%,#09131d 42%,#080c13 100%);padding:22px;z-index:20}
     .welcome-screen[hidden]{display:none}
@@ -83,13 +81,7 @@
     .points{font-weight:800;font-variant-numeric:tabular-nums}
     .notice{font-size:11px;color:var(--muted);line-height:1.5;text-align:center;margin-top:12px}
     .status{font-size:11px;color:var(--muted);min-height:17px;text-align:center;margin-top:10px}
-    @media(max-width:420px){
-      .retro-header{margin-top:12px;padding-top:8px}
-      .retro-title{gap:6px 8px}
-      .retro-title .rainbow{padding:6px 7px;letter-spacing:0.04em}
-      .retro-subtitle{margin-top:12px;letter-spacing:.08em}
-      .pixel-star{transform:scale(.8) rotate(45deg)}
-    }
+    @media(max-width:420px){.retro-header{margin-top:12px;padding-top:8px}.retro-title{gap:6px 8px}.retro-title .rainbow{padding:6px 7px;letter-spacing:0.04em}.retro-subtitle{margin-top:12px;letter-spacing:.08em}.pixel-star{transform:scale(.8) rotate(45deg)}.legends{gap:12px}.legend{font-size:9px}.legend img{width:44px;height:44px}}
     @media(min-width:520px){main{padding-top:25px}}
   </style>
 </head>
@@ -100,325 +92,520 @@
     <span class="pixel-star" aria-hidden="true"></span>
     <span class="pixel-star" aria-hidden="true"></span>
     <span class="pixel-star" aria-hidden="true"></span>
-    <h1 class="retro-title" aria-label="MANI IS GAY">
-      <span class="rainbow" data-text="MANI">MANI</span>
-      <span class="rainbow" data-text="IS">IS</span>
-      <span class="rainbow" data-text="GAY">GAY</span>
+    <h1 class="retro-title" aria-label="Neon Snake title">
+      <span class="rainbow" data-text="NEON">NEON</span>
+      <span class="rainbow" data-text="SNAKE">SNAKE</span>
+      <span class="rainbow" data-text="ARCADE">ARCADE</span>
     </h1>
-    <div class="retro-subtitle">NEON SNAKE ARCADE</div>
+    <div class="retro-subtitle">TELEGRAM EDITION</div>
   </div>
 
   <main>
-    <section class="welcome-screen" id="welcomeScreen" aria-live="polite">
-      <div class="welcome-card">
-        <div class="welcome-brand"><div class="brand">NEON ARCADE</div></div>
-        <h1 class="welcome-head">NEON<br> SNAKE</h1>
-        <p class="welcome-copy">Enter your player name to unlock the board, save your best run, and join the leaderboard.</p>
-        <div class="welcome-form">
-          <div class="welcome-input-wrap">
-            <label class="welcome-label" for="welcomeName">Player name</label>
-            <input id="welcomeName" class="welcome-input" maxlength="24" placeholder="Enter your name" autocomplete="nickname" />
-          </div>
-          <div class="welcome-actions">
-            <button class="primary" id="welcomeStartBtn" type="button">START PLAYING →</button>
-            <button class="quiet" id="welcomeChangeNameBtn" type="button" hidden>Change Name</button>
-          </div>
-        </div>
-      </div>
+    <header>
+      <div><div class="brand">NEON ARCADE</div><div class="sub">SNAKE · TELEGRAM EDITION</div></div>
+      <button class="quiet" id="pauseBtn" type="button">Ⅱ Pause</button>
+    </header>
+
+    <div class="playerbar">
+      <label for="playerName">PLAYER NAME</label>
+      <input id="playerName" maxlength="24" placeholder="Enter your name" autocomplete="nickname">
+      <button id="saveNameBtn" type="button">SAVE</button>
+    </div>
+
+    <div class="legends" aria-label="Player decorations">
+      <div class="legend"><img alt="Pixel portrait of Erling Haaland" src="data:image/png;base64,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" /><span>HAALAND</span></div>
+      <div class="legend"><img alt="Pixel portrait of Michael Olise" src="data:image/png;base64,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" /><span>OLISE</span></div>
+    </div>
+
+    <section class="stats">
+      <div class="stat"><small>YOUR SCORE</small><strong id="score">0</strong></div>
+      <div class="stat"><small>PERSONAL BEST</small><strong id="best">0</strong></div>
     </section>
 
-    <div class="game-app" id="gameApp" hidden>
-      <header>
-        <div><div class="brand">NEON ARCADE</div><div class="sub">SNAKE · TELEGRAM EDITION</div></div>
-        <button class="quiet" id="pauseBtn" type="button">Ⅱ Pause</button>
-      </header>
-      <div class="playerbar">
-        <label for="playerName">PLAYER NAME</label>
-        <input id="playerName" maxlength="24" placeholder="Enter your name" autocomplete="nickname">
-        <button id="saveNameBtn" type="button">SAVE</button>
-      </div>
-      <section class="stats">
-        <div class="stat"><small>YOUR SCORE</small><strong id="score">0</strong></div>
-        <div class="stat"><small>PERSONAL BEST</small><strong id="best">0</strong></div>
-      </section>
-      <div class="stage" id="stage">
-        <canvas id="board" width="600" height="600" aria-label="Neon Snake game board"></canvas>
-        <div class="overlay" id="overlay">
-          <div>
-            <div class="brand" style="margin-bottom:12px">CLASSIC REIMAGINED</div>
-            <h1 id="overlayTitle">SNAKE<span style="color:#b8ff65">.</span></h1>
-            <p id="overlayText">Swipe to steer. Cross the edges. Eat the energy orbs and climb the leaderboard.</p>
-            <button class="primary" id="startBtn" type="button">PLAY GAME →</button>
-          </div>
+    <div class="stage" id="stage">
+      <canvas id="board" width="600" height="600" aria-label="Neon Snake game board"></canvas>
+      <div class="overlay" id="overlay">
+        <div>
+          <div class="brand" style="margin-bottom:12px">CLASSIC REIMAGINED</div>
+          <h1 id="overlayTitle">SNAKE<span style="color:#b8ff65">.</span></h1>
+          <p id="overlayText">Swipe to steer. Cross the edges. Eat the energy orbs and climb the leaderboard.</p>
+          <button class="primary" id="startBtn" type="button">PLAY GAME →</button>
         </div>
       </div>
-      <div class="hint"><span>SWIPE ANYWHERE TO STEER</span><span id="level">LEVEL 1</span></div>
-      <div class="legends">
-        <div class="legend"><img alt="Pixel portrait of Erling Haaland" src="data:image/png;base64,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" /><span>HAALAND</span></div>
-        <div class="legend"><img alt="Pixel portrait of Michael Olise" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230d1824'/%3E%3Crect x='18' y='8' width='28' height='6' fill='%23f0d0a7'/%3E%3Crect x='14' y='14' width='36' height='8' fill='%230a0a12'/%3E%3Crect x='12' y='22' width='40' height='18' fill='%23f0d0a7'/%3E%3Crect x='16' y='18' width='8' height='4' fill='%23030a10'/%3E%3Crect x='40' y='18' width='8' height='4' fill='%23030a10'/%3E%3Crect x='22' y='30' width='6' height='4' fill='%23000'/%3E%3Crect x='36' y='30' width='6' height='4' fill='%23000'/%3E%3Crect x='18' y='38' width='28' height='18' fill='%231b3b68'/%3E%3Crect x='18' y='40' width='8' height='10' fill='%231b3b68'/%3E%3Crect x='38' y='40' width='8' height='10' fill='%231b3b68'/%3E%3Crect x='30' y='44' width='4' height='12' fill='%230d1824'/%3E%3Crect x='16' y='46' width='10' height='8' fill='%230d1824'/%3E%3Crect x='38' y='46' width='10' height='8' fill='%230d1824'/%3E%3Crect x='28' y='2' width='8' height='6' fill='%230a0a12'/%3E%3C/svg%3E" /><span>OLISE</span></div>
-      </div>
-      <div class="actions">
-        <button class="quiet" id="restartBtn" type="button">↻ Restart</button>
-        <button class="quiet" id="soundBtn" type="button">♫ Sound: Off</button>
-      </div>
-      <div class="status" id="status">Connect the backend to enable the global leaderboard.</div>
-      <section class="leaderboard">
-        <div class="lb-head"><h2>GLOBAL LEADERBOARD</h2><span>TOP PLAYERS</span></div>
-        <div id="leaderboardRows"><div class="entry"><span class="rank">—</span><span class="player">Leaderboard not connected</span><span class="points">—</span></div></div>
-        <div class="notice">Scores are submitted when a run ends. Telegram login is required for verified player names.</div>
-      </section>
     </div>
+
+    <div class="hint"><span>SWIPE ANYWHERE TO STEER</span><span id="level">LEVEL 1</span></div>
+    <div class="actions">
+      <button class="quiet" id="restartBtn" type="button">↻ Restart</button>
+      <button class="quiet" id="soundBtn" type="button">♫ Sound: On</button>
+    </div>
+
+    <div class="status" id="status">Connect the backend to enable the global leaderboard.</div>
+
+    <section class="leaderboard">
+      <div class="lb-head"><h2>GLOBAL LEADERBOARD</h2><span>TOP PLAYERS</span></div>
+      <div id="leaderboardRows"><div class="entry"><span class="rank">—</span><span class="player">Leaderboard not connected</span><span class="points">—</span></div></div>
+      <div class="notice">Scores are submitted when a run ends. Telegram login is required for verified player names.</div>
+    </section>
   </main>
-<script>
-(() => {
-  const CONFIG = {
-    leaderboardUrl: "PASTE_YOUR_SUPABASE_FUNCTION_URL_HERE"
-  };
-  const STORAGE_KEY = "neonSnakePlayerName";
-  const tg = window.Telegram?.WebApp;
-  if (tg) { tg.ready(); tg.expand(); tg.setHeaderColor?.("#080c13"); tg.setBackgroundColor?.("#080c13"); }
 
-  const $ = id => document.getElementById(id);
-  const welcomeScreen = $("welcomeScreen");
-  const gameApp = $("gameApp");
-  const welcomeName = $("welcomeName");
-  const playerNameInput = $("playerName");
-  const canvas = $("board"), ctx = canvas.getContext("2d");
-  const N = 24, CELL = 25;
-  const vectors = {up:{x:0,y:-1},down:{x:0,y:1},left:{x:-1,y:0},right:{x:1,y:0}};
-  let snake, food, dir, nextDir, score=0, best=0, running=false, paused=false, alive=true;
-  let timer=null, sound=false, audio=null, touchStart=null, lastTurn=0;
-  let playerName = "";
+  <script>
+    (() => {
+      "use strict";
 
-  function getSavedName() {
-    try { return localStorage.getItem(STORAGE_KEY) || ""; } catch { return ""; }
-  }
+      const CONFIG = {
+        leaderboardUrl: "PASTE_YOUR_SUPABASE_FUNCTION_URL_HERE"
+      };
+      const KEYS = {
+        name: "neonSnakePlayerName",
+        best: "neonSnakeBest",
+        sound: "neonSnakeSound",
+        vibration: "neonSnakeVibration"
+      };
+      const tg = window.Telegram?.WebApp;
+      if (tg) {
+        tg.ready();
+        tg.expand();
+        try { tg.setHeaderColor?.("#080c13"); tg.setBackgroundColor?.("#080c13"); } catch {}
+      }
 
-  function sanitizeName(value) {
-    return String(value || "").trim().replace(/\s+/g, " ").slice(0, 24);
-  }
+      const $ = id => document.getElementById(id);
+      const canvas = $("board"), ctx = canvas.getContext("2d");
+      const GRID = 24, CELL = 25;
+      const VECTORS = {up:{x:0,y:-1},down:{x:0,y:1},left:{x:-1,y:0},right:{x:1,y:0}};
+      let snake = [], food = null, bonusFood = null, dir = {x:1,y:0}, nextDir = {x:1,y:0};
+      let score = 0, best = 0, running = false, paused = false, alive = true, timer = null;
+      let sound = true, vibration = true, audio = null, touchStart = null, lastTurn = 0, playerName = "";
+      let bonusTimer = 0;
 
-  function showWelcome() {
-    welcomeScreen.hidden = false;
-    gameApp.hidden = true;
-    welcomeName.value = playerName || "";
-    welcomeName.focus();
-  }
+      const safeGet = key => { try { return localStorage.getItem(key) || ""; } catch { return ""; } };
+      const safeSet = (key, value) => { try { localStorage.setItem(key, String(value)); } catch {} };
+      const cleanName = value => String(value || "").trim().replace(/\s+/g, " ").replace(/[<>]/g, "").slice(0, 24);
 
-  function showGame() {
-    welcomeScreen.hidden = true;
-    gameApp.hidden = false;
-    playerNameInput.value = playerName;
-    welcomeName.value = playerName;
-  }
+      function updateStats() {
+        $("score").textContent = score;
+        $("best").textContent = best;
+        $("level").textContent = "LEVEL " + (1 + Math.floor(score / 5));
+      }
 
-  function savePlayerName(value, skipPrompt = false) {
-    const clean = sanitizeName(value);
-    if (!clean) {
-      if (!skipPrompt) $("status").textContent = "Enter a player name first.";
-      return false;
-    }
-    playerName = clean;
-    try { localStorage.setItem(STORAGE_KEY, clean); } catch {}
-    playerNameInput.value = clean;
-    welcomeName.value = clean;
-    $("status").textContent = "Player name saved: " + clean;
-    showGame();
-    return true;
-  }
+      function updatePlayerNameDisplay() {
+        const value = playerName || "Guest";
+        $("playerName").value = value;
+      }
 
-  $("welcomeStartBtn").onclick = () => savePlayerName(welcomeName.value);
-  $("welcomeChangeNameBtn").onclick = () => {
-    welcomeName.focus();
-    welcomeName.select();
-  };
-  $("saveNameBtn").onclick = () => savePlayerName(playerNameInput.value);
-  $("playerName").addEventListener("keydown", (e) => { if (e.key === "Enter") savePlayerName(playerNameInput.value); });
-  $("welcomeName").addEventListener("keydown", (e) => { if (e.key === "Enter") savePlayerName(welcomeName.value); });
-  $("pauseBtn").onclick = () => { if (!playerName) return; pause(); };
+      function setStatus(msg) {
+        $("status").textContent = msg;
+      }
 
-  try { best = Number(localStorage.getItem("neonSnakeBest")) || 0; } catch {}
-  $("best").textContent = best;
+      function buzz(pattern = 12) {
+        if (!vibration) return;
+        try { if (navigator.vibrate) navigator.vibrate(pattern); } catch {}
+        try { tg?.HapticFeedback?.impactOccurred?.("light"); } catch {}
+      }
 
-  function updateStats() {
-    $("score").textContent = score; $("best").textContent = best;
-    $("level").textContent = "LEVEL " + (1 + Math.floor(score / 5));
-  }
-  function spawnFood() {
-    do { food={x:Math.floor(Math.random()*N),y:Math.floor(Math.random()*N)}; }
-    while (snake.some(s=>s.x===food.x && s.y===food.y));
-  }
-  function reset() {
-    clearInterval(timer);
-    snake=[{x:8,y:12},{x:7,y:12},{x:6,y:12},{x:5,y:12}];
-    dir={x:1,y:0}; nextDir={...dir}; score=0;
-    alive=true; running=false; paused=false; spawnFood(); updateStats(); draw();
-  }
-  function beep(freq=500) {
-    if (!sound) return;
-    try {
-      audio=audio||new (window.AudioContext||window.webkitAudioContext)();
-      const o=audio.createOscillator(),g=audio.createGain();
-      o.connect(g);g.connect(audio.destination);o.frequency.value=freq;
-      g.gain.setValueAtTime(.04,audio.currentTime);
-      g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+.12);
-      o.start();o.stop(audio.currentTime+.12);
-    } catch {}
-  }
-  function steer(name) {
-    if (!running || paused || !alive) return;
-    const v=vectors[name];
-    if (v.x===-dir.x && v.y===-dir.y) return;
-    nextDir=v;
-  }
-  function start() {
-    if (!playerName) {
-      showWelcome();
-      return;
-    }
-    if (!alive) reset();
-    paused=false;running=true;$("overlay").hidden=true;
-    $("pauseBtn").textContent="Ⅱ Pause";
-    clearInterval(timer);
-    timer=setInterval(tick,Math.max(65,145-score*2));
-  }
-  function pause() {
-    if (!running) return;
-    paused=!paused;
-    if (paused) {
-      clearInterval(timer);$("overlay").hidden=false;
-      $("overlayTitle").textContent="PAUSED";
-      $("overlayText").textContent="Your run is paused.";
-      $("startBtn").textContent="RESUME →";
-      $("pauseBtn").textContent="▶ Resume";
-    } else start();
-  }
-  function tick() {
-    if (!running || paused || !alive) return;
-    dir=nextDir;
-    const head={x:(snake[0].x+dir.x+N)%N,y:(snake[0].y+dir.y+N)%N};
-    if (snake.slice(0,-1).some(s=>s.x===head.x&&s.y===head.y)) { endGame(); return; }
-    snake.unshift(head);
-    if (head.x===food.x&&head.y===food.y) {
-      score++;beep(620);spawnFood();
-      if (score>best) { best=score; try{localStorage.setItem("neonSnakeBest",best);}catch{} }
-      updateStats();clearInterval(timer);timer=setInterval(tick,Math.max(65,145-score*2));
-    } else snake.pop();
-    draw();
-  }
-  function endGame() {
-    running=false;alive=false;clearInterval(timer);beep(130);
-    $("overlay").hidden=false;$("overlayTitle").textContent="GAME OVER";
-    $("overlayText").textContent="You scored "+score+" points. Submit your score and challenge your friends.";
-    $("startBtn").textContent="PLAY AGAIN →";
-    submitScore();
-  }
-  function rounded(x,y,w,h,r) { ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill(); }
-  function draw() {
-    ctx.clearRect(0,0,600,600);ctx.fillStyle="#090e16";ctx.fillRect(0,0,600,600);
-    ctx.strokeStyle="rgba(135,165,190,.075)";ctx.lineWidth=1;
-    for(let i=0;i<=N;i++){ctx.beginPath();ctx.moveTo(i*CELL,0);ctx.lineTo(i*CELL,600);ctx.stroke();ctx.beginPath();ctx.moveTo(0,i*CELL);ctx.lineTo(600,i*CELL);ctx.stroke();}
-    const fx=(food.x+.5)*CELL,fy=(food.y+.5)*CELL;
-    ctx.shadowColor="#ff527d";ctx.shadowBlur=25;ctx.fillStyle="#ff527d";
-    ctx.beginPath();ctx.arc(fx,fy,7,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
-    ctx.fillStyle="#fff1f5";ctx.beginPath();ctx.arc(fx-2,fy-2,2,0,Math.PI*2);ctx.fill();
-    snake.forEach((s,i)=>{
-      const p=i===0?2:3,x=s.x*CELL+p,y=s.y*CELL+p,w=CELL-p*2;
-      ctx.shadowColor="#9aff63";ctx.shadowBlur=i===0?18:7;
-      ctx.fillStyle=i===0?"#c8ff83":`rgb(${Math.round(65+i*.4)},${Math.round(225-i*1.1)},${Math.round(80-i*.3)})`;
-      rounded(x,y,w,w,i===0?9:7);ctx.shadowBlur=0;
-      if(i===0){ctx.fillStyle="#14210e";if(dir.x){const ex=x+(dir.x>0?14:4);ctx.fillRect(ex,y+5,4,4);ctx.fillRect(ex,y+14,4,4);}else{const ey=y+(dir.y>0?14:4);ctx.fillRect(x+5,ey,4,4);ctx.fillRect(x+14,ey,4,4);}}
-    });
-  }
-  function point(e) {
-    const r=canvas.getBoundingClientRect();
-    return {x:(e.clientX-r.left)/r.width*600,y:(e.clientY-r.top)/r.height*600};
-  }
-  canvas.style.touchAction="none";
-  canvas.addEventListener("pointerdown",e=>{
-    e.preventDefault();const p=point(e);touchStart={x:p.x,y:p.y,id:e.pointerId};
-    try{canvas.setPointerCapture(e.pointerId);}catch{}
-  },{passive:false});
-  canvas.addEventListener("pointerup",e=>{
-    if(!touchStart||touchStart.id!==e.pointerId)return;
-    e.preventDefault();const p=point(e),dx=p.x-touchStart.x,dy=p.y-touchStart.y;touchStart=null;
-    if(Math.max(Math.abs(dx),Math.abs(dy))<12)return;
-    const now=Date.now();if(now-lastTurn<35)return;lastTurn=now;
-    steer(Math.abs(dx)>Math.abs(dy)?(dx>0?"right":"left"):(dy>0?"down":"up"));
-  },{passive:false});
-  canvas.addEventListener("pointercancel",()=>touchStart=null);
-  canvas.addEventListener("contextmenu",e=>e.preventDefault());
-  window.addEventListener("keydown",e=>{
-    const map={ArrowUp:"up",ArrowDown:"down",ArrowLeft:"left",ArrowRight:"right",w:"up",s:"down",a:"left",d:"right"};
-    if(map[e.key]){e.preventDefault();steer(map[e.key]);}
-    if(e.code==="Space"){e.preventDefault();if(!running||paused)start();else pause();}
-  });
-  $("startBtn").onclick=()=>{if(paused)start();else{reset();start();}};
-  $("restartBtn").onclick=()=>{
-    reset();$("overlay").hidden=false;$("overlayTitle").innerHTML='SNAKE<span style="color:#b8ff65">.</span>';
-    $("overlayText").textContent="Swipe to steer. Cross the edges. Eat the energy orbs.";
-    $("startBtn").textContent="PLAY GAME →";
-  };
-  $("soundBtn").onclick=()=>{sound=!sound;$("soundBtn").textContent="♫ Sound: "+(sound?"On":"Off");beep(500);};
+      function beep(freq = 520, duration = 0.09, type = "sine") {
+        if (!sound) return;
+        try {
+          audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+          if (audio.state === "suspended") audio.resume();
+          const osc = audio.createOscillator();
+          const gain = audio.createGain();
+          osc.type = type; osc.frequency.setValueAtTime(freq, audio.currentTime);
+          gain.gain.setValueAtTime(0.045, audio.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + duration);
+          osc.connect(gain); gain.connect(audio.destination);
+          osc.start(); osc.stop(audio.currentTime + duration);
+        } catch {}
+      }
 
-  function telegramInitData() { return tg?.initData || ""; }
-  async function api(action,extra={}) {
-    if(!CONFIG.leaderboardUrl.startsWith("https://")) throw new Error("Leaderboard backend is not configured yet.");
-    const res=await fetch(CONFIG.leaderboardUrl,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action,initData:telegramInitData(),displayName:playerName,...extra})});
-    const data=await res.json();if(!res.ok)throw new Error(data.error||"Request failed");return data;
-  }
-  async function submitScore() {
-    if(!tg?.initData){$("status").textContent="Open this game through your Telegram bot to submit scores.";return;}
-    if(!playerName && !savePlayerName(playerNameInput.value)) return;
-    $("status").textContent="Submitting your score…";
-    try {const result=await api("submit",{score});$("status").textContent=result.message||"Score submitted.";await loadLeaderboard();}
-    catch(e){$("status").textContent=e.message;}
-  }
-  async function loadLeaderboard() {
-    try {
-      const result=await api("leaderboard");
-      const rows=$("leaderboardRows");rows.replaceChildren();
-      if(!result.players?.length){rows.textContent="No scores yet. Be the first!";return;}
-      result.players.forEach((p,i)=>{
-        const row=document.createElement("div");row.className="entry";
-        const rank=document.createElement("span");rank.className="rank";rank.textContent="#"+(i+1);
-        const name=document.createElement("span");name.className="player";name.textContent=p.display_name||"Player";
-        const points=document.createElement("span");points.className="points";points.textContent=p.best_score;
-        row.append(rank,name,points);rows.append(row);
+      function loadSettings() {
+        try {
+          playerName = cleanName(safeGet(KEYS.name) || tg?.initDataUnsafe?.user?.first_name || "");
+        } catch {
+          playerName = "";
+        }
+        try {
+          best = Number(safeGet(KEYS.best)) || 0;
+        } catch {
+          best = 0;
+        }
+        try {
+          sound = safeGet(KEYS.sound) !== "off";
+        } catch {
+          sound = true;
+        }
+        try {
+          vibration = safeGet(KEYS.vibration) !== "off";
+        } catch {
+          vibration = true;
+        }
+        $("soundBtn").textContent = "♫ Sound: " + (sound ? "On" : "Off");
+        updatePlayerNameDisplay();
+        updateStats();
+      }
+
+      function saveSettings() {
+        if (playerName) safeSet(KEYS.name, playerName);
+        safeSet(KEYS.best, String(best));
+        safeSet(KEYS.sound, sound ? "on" : "off");
+        safeSet(KEYS.vibration, vibration ? "on" : "off");
+      }
+
+      function savePlayerName() {
+        const value = cleanName($("playerName").value);
+        if (!value) {
+          setStatus("Enter a player name first.");
+          $("playerName").focus();
+          return false;
+        }
+        playerName = value;
+        $("playerName").value = value;
+        safeSet(KEYS.name, value);
+        setStatus("Player name saved: " + value);
+        return true;
+      }
+
+      function randomCell() {
+        let cell;
+        do {
+          cell = {x: Math.floor(Math.random() * GRID), y: Math.floor(Math.random() * GRID)};
+        } while (snake.some(s => s.x === cell.x && s.y === cell.y) || (bonusFood && bonusFood.x === cell.x && bonusFood.y === cell.y));
+        return cell;
+      }
+
+      function spawnFood() {
+        food = randomCell();
+      }
+
+      function spawnBonusFood() {
+        bonusFood = randomCell();
+        bonusTimer = 6000;
+      }
+
+      function clearBonusFood() {
+        bonusFood = null; bonusTimer = 0;
+      }
+
+      function reset() {
+        clearInterval(timer);
+        snake = [{x:8,y:12},{x:7,y:12},{x:6,y:12},{x:5,y:12}];
+        dir = {x:1,y:0};
+        nextDir = {x:1,y:0};
+        score = 0;
+        level = 1;
+        bonusFood = null; bonusTimer = 0; alive = true; running = false; paused = false;
+        spawnFood();
+        updateStats();
+        draw();
+      }
+
+      function start() {
+        if (!playerName && !savePlayerName()) return;
+        if (!alive) reset();
+        paused = false; running = true; $("overlay").hidden = true; $("pauseBtn").textContent = "Ⅱ Pause";
+        clearInterval(timer);
+        timer = setInterval(tick, Math.max(65, 145 - score * 2));
+      }
+
+      function pause() {
+        if (!running) return;
+        paused = !paused;
+        if (paused) {
+          clearInterval(timer);
+          $("overlay").hidden = false;
+          $("overlayTitle").textContent = "PAUSED";
+          $("overlayText").textContent = "Your run is paused.";
+          $("startBtn").textContent = "RESUME →";
+          $("pauseBtn").textContent = "▶ Resume";
+        } else {
+          $("overlay").hidden = true;
+          $("pauseBtn").textContent = "Ⅱ Pause";
+          clearInterval(timer);
+          timer = setInterval(tick, Math.max(65, 145 - score * 2));
+        }
+      }
+
+      function endGame() {
+        running = false; alive = false; clearInterval(timer); beep(130, 0.16, "square"); buzz(18);
+        $("overlay").hidden = false;
+        $("overlayTitle").textContent = "GAME OVER";
+        $("overlayText").textContent = "You scored " + score + " points. Submit your score and challenge your friends.";
+        $("startBtn").textContent = "PLAY AGAIN →";
+        submitScore();
+      }
+
+      function steer(name) {
+        if (!running || paused || !alive) return;
+        const v = VECTORS[name];
+        if (!v) return;
+        if (v.x === -dir.x && v.y === -dir.y) return;
+        nextDir = v;
+      }
+
+      function tick() {
+        if (!running || paused || !alive) return;
+        dir = nextDir;
+        const head = {x:(snake[0].x + dir.x + GRID) % GRID, y:(snake[0].y + dir.y + GRID) % GRID};
+        if (snake.slice(0, -1).some(s => s.x === head.x && s.y === head.y)) {
+          endGame();
+          return;
+        }
+
+        snake.unshift(head);
+
+        let ateFood = false;
+        if (head.x === food.x && head.y === food.y) {
+          score += 1;
+          ateFood = true;
+          beep(620, 0.08, "triangle");
+          if (score > best) {
+            best = score;
+            safeSet(KEYS.best, String(best));
+          }
+          if (Math.random() < 0.22) spawnBonusFood(); else clearBonusFood();
+        }
+
+        if (bonusFood && head.x === bonusFood.x && head.y === bonusFood.y) {
+          score += 3;
+          beep(820, 0.1, "sawtooth");
+          clearBonusFood();
+          if (score > best) {
+            best = score;
+            safeSet(KEYS.best, String(best));
+          }
+        }
+
+        if (!ateFood && !(bonusFood && head.x === bonusFood.x && head.y === bonusFood.y)) {
+          snake.pop();
+        }
+
+        if (bonusFood) {
+          bonusTimer -= 100;
+          if (bonusTimer <= 0) clearBonusFood();
+        }
+
+        level = 1 + Math.floor(score / 5);
+        updateStats();
+        clearInterval(timer);
+        timer = setInterval(tick, Math.max(65, 145 - score * 2));
+        draw();
+      }
+
+      function roundedRect(x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.roundRect(x, y, w, h, r);
+        ctx.fill();
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, 600, 600);
+        ctx.fillStyle = "#090e16";
+        ctx.fillRect(0, 0, 600, 600);
+
+        ctx.strokeStyle = "rgba(135,165,190,.075)";
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= GRID; i++) {
+          ctx.beginPath();
+          ctx.moveTo(i * CELL, 0);
+          ctx.lineTo(i * CELL, 600);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(0, i * CELL);
+          ctx.lineTo(600, i * CELL);
+          ctx.stroke();
+        }
+
+        const fx = (food.x + 0.5) * CELL;
+        const fy = (food.y + 0.5) * CELL;
+        ctx.shadowColor = "#ff527d";
+        ctx.shadowBlur = 22;
+        ctx.fillStyle = "#ff527d";
+        ctx.beginPath();
+        ctx.arc(fx, fy, 7, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = "#fff1f5";
+        ctx.beginPath();
+        ctx.arc(fx - 2, fy - 2, 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (bonusFood) {
+          const bx = (bonusFood.x + 0.5) * CELL;
+          const by = (bonusFood.y + 0.5) * CELL;
+          ctx.shadowColor = "#ffd166";
+          ctx.shadowBlur = 18;
+          ctx.fillStyle = "#ffd166";
+          ctx.beginPath();
+          ctx.arc(bx, by, 6, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.shadowBlur = 0;
+          ctx.fillStyle = "#fff4d6";
+          ctx.beginPath();
+          ctx.arc(bx - 2, by - 2, 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        snake.forEach((s, i) => {
+          const p = i === 0 ? 2 : 3;
+          const x = s.x * CELL + p;
+          const y = s.y * CELL + p;
+          const w = CELL - p * 2;
+          ctx.shadowColor = i === 0 ? "#9aff63" : "#76fbb2";
+          ctx.shadowBlur = i === 0 ? 18 : 7;
+          ctx.fillStyle = i === 0 ? "#c8ff83" : `rgb(${Math.round(65 + i * 0.4)},${Math.round(225 - i * 1.1)},${Math.round(80 - i * 0.3)})`;
+          roundedRect(x, y, w, w, i === 0 ? 9 : 7);
+          ctx.shadowBlur = 0;
+          if (i === 0) {
+            ctx.fillStyle = "#14210e";
+            if (dir.x) {
+              const ex = x + (dir.x > 0 ? 14 : 4);
+              ctx.fillRect(ex, y + 5, 4, 4);
+              ctx.fillRect(ex, y + 14, 4, 4);
+            } else {
+              const ey = y + (dir.y > 0 ? 14 : 4);
+              ctx.fillRect(x + 5, ey, 4, 4);
+              ctx.fillRect(x + 14, ey, 4, 4);
+            }
+          }
+        });
+      }
+
+      function pointFromEvent(event) {
+        const rect = canvas.getBoundingClientRect();
+        return {x:(event.clientX - rect.left) / rect.width * 600, y:(event.clientY - rect.top) / rect.height * 600};
+      }
+
+      canvas.style.touchAction = "none";
+      canvas.addEventListener("pointerdown", e => {
+        e.preventDefault();
+        const p = pointFromEvent(e);
+        touchStart = {x:p.x, y:p.y, id:e.pointerId};
+        try { canvas.setPointerCapture(e.pointerId); } catch {}
+      }, {passive:false});
+
+      canvas.addEventListener("pointerup", e => {
+        if (!touchStart || touchStart.id !== e.pointerId) return;
+        e.preventDefault();
+        const p = pointFromEvent(e);
+        const dx = p.x - touchStart.x;
+        const dy = p.y - touchStart.y;
+        touchStart = null;
+        if (Math.max(Math.abs(dx), Math.abs(dy)) < 12) return;
+        const now = Date.now();
+        if (now - lastTurn < 35) return;
+        lastTurn = now;
+        const direction = Math.abs(dx) > Math.abs(dy)
+          ? (dx > 0 ? "right" : "left")
+          : (dy > 0 ? "down" : "up");
+        steer(direction);
+      }, {passive:false});
+
+      canvas.addEventListener("pointercancel", () => touchStart = null);
+      canvas.addEventListener("contextmenu", e => e.preventDefault());
+
+      window.addEventListener("keydown", e => {
+        const map = {ArrowUp:"up", ArrowDown:"down", ArrowLeft:"left", ArrowRight:"right", w:"up", s:"down", a:"left", d:"right"};
+        if (map[e.key]) {
+          e.preventDefault();
+          steer(map[e.key]);
+        }
+        if (e.code === "Space") {
+          e.preventDefault();
+          if (!running || paused) start(); else pause();
+        }
       });
-    } catch(e) { $("status").textContent=e.message; }
-  }
 
-  const savedName = getSavedName();
-  if (savedName) {
-    playerName = sanitizeName(savedName);
-    showGame();
-    $("status").textContent = "Welcome back, " + playerName + ".";
-  } else {
-    showWelcome();
-    $("status").textContent = "Create a player name to begin.";
-  }
+      $("saveNameBtn").addEventListener("click", () => {
+        savePlayerName();
+      });
+      $("playerName").addEventListener("keydown", e => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          savePlayerName();
+        }
+      });
 
-  const readyName = sanitizeName(playerName || welcomeName.value || tg?.initDataUnsafe?.user?.first_name || "");
-  if (readyName) {
-    playerName = readyName;
-    playerNameInput.value = readyName;
-    welcomeName.value = readyName;
-    showGame();
-  }
+      $("startBtn").addEventListener("click", () => {
+        if (paused) start(); else { reset(); start(); }
+      });
+      $("pauseBtn").addEventListener("click", () => pause());
+      $("restartBtn").addEventListener("click", () => {
+        reset();
+        $("overlay").hidden = false;
+        $("overlayTitle").innerHTML = 'SNAKE<span style="color:#b8ff65">.</span>';
+        $("overlayText").textContent = "Swipe to steer. Cross the edges. Eat the energy orbs.";
+        $("startBtn").textContent = "PLAY GAME →";
+      });
+      $("soundBtn").addEventListener("click", () => {
+        sound = !sound;
+        safeSet(KEYS.sound, sound ? "on" : "off");
+        $("soundBtn").textContent = "♫ Sound: " + (sound ? "On" : "Off");
+        beep(500, 0.08, "triangle");
+      });
 
-  $("welcomeChangeNameBtn").onclick = () => {
-    playerName = "";
-    showWelcome();
-    $("status").textContent = "Choose a new player name.";
-  };
+      function telegramInitData() { return tg?.initData || ""; }
 
-  if (playerName) {
-    showGame();
-    reset();
-    if (tg?.initData) loadLeaderboard();
-  }
-})();
-</script>
+      async function api(action, extra = {}) {
+        if (!CONFIG.leaderboardUrl.startsWith("https://")) throw new Error("Leaderboard backend is not configured yet.");
+        const res = await fetch(CONFIG.leaderboardUrl, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({action, initData: telegramInitData(), displayName: playerName, ...extra})
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Request failed");
+        return data;
+      }
+
+      async function submitScore() {
+        if (!tg?.initData) {
+          setStatus("Open this game through your Telegram bot to submit scores.");
+          return;
+        }
+        if (!playerName && !savePlayerName()) return;
+        setStatus("Submitting your score…");
+        try {
+          const result = await api("submit", {score});
+          setStatus(result.message || "Score submitted.");
+          await loadLeaderboard();
+        } catch (e) {
+          setStatus(e.message || "Unable to submit score.");
+        }
+      }
+
+      async function loadLeaderboard() {
+        try {
+          const result = await api("leaderboard");
+          const rows = $("leaderboardRows");
+          rows.replaceChildren();
+          if (!result.players || !result.players.length) {
+            rows.textContent = "No scores yet. Be the first!";
+            return;
+          }
+          result.players.forEach((p, i) => {
+            const row = document.createElement("div");
+            row.className = "entry";
+            const rank = document.createElement("span");
+            rank.className = "rank";
+            rank.textContent = "#" + (i + 1);
+            const name = document.createElement("span");
+            name.className = "player";
+            name.textContent = p.display_name || "Player";
+            const points = document.createElement("span");
+            points.className = "points";
+            points.textContent = p.best_score;
+            row.append(rank, name, points);
+            rows.append(row);
+          });
+        } catch (e) {
+          setStatus(e.message || "Leaderboard unavailable.");
+        }
+      }
+
+      loadSettings();
+      reset();
+      if (tg?.initData) loadLeaderboard();
+    })();
+  </script>
 </body>
 </html>

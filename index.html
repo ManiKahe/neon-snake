@@ -18,6 +18,14 @@
     button:disabled{opacity:.5;cursor:default}
     .quiet{background:var(--panel);border:1px solid #263342;color:#e9eef4}
     .primary{background:var(--lime);color:#11190b;padding:13px 25px}
+    .playerbar{display:flex;align-items:center;gap:10px;background:#111a25;border:1px solid #263342;border-radius:13px;padding:9px 11px;margin:0 0 12px}
+    .playerbar label{font-size:9px;color:var(--muted);letter-spacing:1px;white-space:nowrap}
+    .playerbar input{min-width:0;flex:1;background:#080c13;border:1px solid #334253;border-radius:8px;padding:9px;color:#fff;font:inherit;font-size:13px;outline:none}
+    .playerbar input:focus{border-color:var(--lime)}
+    .playerbar button{padding:9px 11px;font-size:11px;background:#b8ff65;color:#11190b}
+    .legends{display:flex;justify-content:center;gap:24px;margin:13px 0 2px}
+    .legend{display:flex;align-items:center;gap:8px;color:#aab6c4;font-size:10px;letter-spacing:.8px}
+    .legend img{width:54px;height:54px;object-fit:cover;image-rendering:pixelated;border:2px solid #334253;border-radius:9px;box-shadow:0 0 16px #9aff6322}
     .stats{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}
     .stat{background:#111a25;border:1px solid #263342;border-radius:13px;padding:10px 13px}
     .stat small{display:block;color:var(--muted);font-size:10px;letter-spacing:1.5px}
@@ -49,6 +57,7 @@
     <div><div class="brand">NEON ARCADE</div><div class="sub">SNAKE · TELEGRAM EDITION</div></div>
     <button class="quiet" id="pauseBtn">Ⅱ Pause</button>
   </header>
+  <div class="playerbar"><label for="playerName">PLAYER NAME</label><input id="playerName" maxlength="24" placeholder="Enter your name" autocomplete="nickname"><button id="saveNameBtn">SAVE</button></div>
   <section class="stats">
     <div class="stat"><small>YOUR SCORE</small><strong id="score">0</strong></div>
     <div class="stat"><small>PERSONAL BEST</small><strong id="best">0</strong></div>
@@ -65,6 +74,7 @@
     </div>
   </div>
   <div class="hint"><span>SWIPE ANYWHERE TO STEER</span><span id="level">LEVEL 1</span></div>
+  <div class="legends"><div class="legend"><img alt="Pixel portrait of Erling Haaland" src="data:image/png;base64,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"><span>HAALAND</span></div><div class="legend"><img alt="Pixel portrait of Michael Olise" src="data:image/png;base64,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"><span>OLISE</span></div></div>
   <div class="actions">
     <button class="quiet" id="restartBtn">↻ Restart</button>
     <button class="quiet" id="soundBtn">♫ Sound: Off</button>
@@ -92,6 +102,19 @@
   const vectors = {up:{x:0,y:-1},down:{x:0,y:1},left:{x:-1,y:0},right:{x:1,y:0}};
   let snake, food, dir, nextDir, score=0, best=0, running=false, paused=false, alive=true;
   let timer=null, sound=false, audio=null, touchStart=null, lastTurn=0;
+  let playerName = "";
+  try { playerName = localStorage.getItem("neonSnakePlayerName") || tg?.initDataUnsafe?.user?.first_name || ""; } catch {}
+  $("playerName").value = playerName;
+  function savePlayerName() {
+    const value = $("playerName").value.trim().replace(/\s+/g," ").slice(0,24);
+    if (!value) { $("status").textContent = "Enter a player name first."; return false; }
+    playerName = value; $("playerName").value = value;
+    try { localStorage.setItem("neonSnakePlayerName", value); } catch {}
+    $("status").textContent = "Player name saved: " + value;
+    return true;
+  }
+  $("saveNameBtn").onclick = savePlayerName;
+  $("playerName").addEventListener("keydown", e => { if(e.key === "Enter") savePlayerName(); });
   try { best = Number(localStorage.getItem("neonSnakeBest")) || 0; } catch {}
   $("best").textContent = best;
 
@@ -127,6 +150,7 @@
     nextDir=v;
   }
   function start() {
+    if (!savePlayerName()) return;
     if (!alive) reset();
     paused=false;running=true;$("overlay").hidden=true;
     $("pauseBtn").textContent="Ⅱ Pause";
@@ -216,11 +240,12 @@
   function telegramInitData() { return tg?.initData || ""; }
   async function api(action,extra={}) {
     if(!CONFIG.leaderboardUrl.startsWith("https://")) throw new Error("Leaderboard backend is not configured yet.");
-    const res=await fetch(CONFIG.leaderboardUrl,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action,initData:telegramInitData(),...extra})});
+    const res=await fetch(CONFIG.leaderboardUrl,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action,initData:telegramInitData(),displayName:playerName,...extra})});
     const data=await res.json();if(!res.ok)throw new Error(data.error||"Request failed");return data;
   }
   async function submitScore() {
     if(!tg?.initData){$("status").textContent="Open this game through your Telegram bot to submit scores.";return;}
+    if(!playerName && !savePlayerName()) return;
     $("status").textContent="Submitting your score…";
     try {const result=await api("submit",{score});$("status").textContent=result.message||"Score submitted.";await loadLeaderboard();}
     catch(e){$("status").textContent=e.message;}

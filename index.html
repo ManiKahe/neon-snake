@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="theme-color" content="#090e16">
+  <title>Neon Snake</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root{color-scheme:dark;--lime:#b8ff65;--muted:#9aa7b7;--panel:#111a25}
+    *{box-sizing:border-box}
+    body{margin:0;background:#080c13;color:#f3f6f8;font-family:Inter,system-ui,Arial,sans-serif;min-height:100vh}
+    main{width:min(100%,520px);margin:auto;padding:18px 15px 28px}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px}
+    .brand{font-size:12px;letter-spacing:2px;font-weight:800;color:var(--lime)}
+    .sub{font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:3px}
+    button{border:0;border-radius:12px;padding:11px 15px;font-weight:700;cursor:pointer}
+    button:disabled{opacity:.5;cursor:default}
+    .quiet{background:var(--panel);border:1px solid #263342;color:#e9eef4}
+    .primary{background:var(--lime);color:#11190b;padding:13px 25px}
+    .stats{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}
+    .stat{background:#111a25;border:1px solid #263342;border-radius:13px;padding:10px 13px}
+    .stat small{display:block;color:var(--muted);font-size:10px;letter-spacing:1.5px}
+    .stat strong{font-size:24px;font-variant-numeric:tabular-nums}
+    .stage{position:relative;width:100%;aspect-ratio:1;background:#090e16;border:1px solid #263342;border-radius:17px;overflow:hidden;touch-action:none}
+    canvas{width:100%;height:100%;display:block;touch-action:none}
+    .overlay{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:22px;background:#080c13bd;backdrop-filter:blur(7px)}
+    .overlay[hidden]{display:none}
+    .overlay h1{font-size:38px;line-height:1;margin:0 0 10px;font-weight:900;letter-spacing:-2px}
+    .overlay p{font-size:13px;color:#b5c0cc;line-height:1.5;margin:0 auto 19px;max-width:280px}
+    .hint{display:flex;justify-content:space-between;color:var(--muted);font-size:10px;letter-spacing:1px;margin:10px 2px 13px}
+    .actions{display:flex;gap:8px;justify-content:center}
+    .leaderboard{margin-top:23px;background:#101822;border:1px solid #263342;border-radius:16px;padding:15px}
+    .lb-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .lb-head h2{font-size:15px;margin:0}
+    .lb-head span{font-size:10px;color:var(--muted)}
+    .entry{display:grid;grid-template-columns:28px 1fr auto;gap:9px;align-items:center;padding:9px 2px;border-top:1px solid #263342;font-size:13px}
+    .rank{color:var(--lime);font-weight:800}
+    .player{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .points{font-weight:800;font-variant-numeric:tabular-nums}
+    .notice{font-size:11px;color:var(--muted);line-height:1.5;text-align:center;margin-top:12px}
+    .status{font-size:11px;color:var(--muted);min-height:17px;text-align:center;margin-top:10px}
+    @media(min-width:520px){main{padding-top:25px}}
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div><div class="brand">NEON ARCADE</div><div class="sub">SNAKE · TELEGRAM EDITION</div></div>
+    <button class="quiet" id="pauseBtn">Ⅱ Pause</button>
+  </header>
+  <section class="stats">
+    <div class="stat"><small>YOUR SCORE</small><strong id="score">0</strong></div>
+    <div class="stat"><small>PERSONAL BEST</small><strong id="best">0</strong></div>
+  </section>
+  <div class="stage" id="stage">
+    <canvas id="board" width="600" height="600" aria-label="Neon Snake game board"></canvas>
+    <div class="overlay" id="overlay">
+      <div>
+        <div class="brand" style="margin-bottom:12px">CLASSIC REIMAGINED</div>
+        <h1 id="overlayTitle">SNAKE<span style="color:#b8ff65">.</span></h1>
+        <p id="overlayText">Swipe to steer. Cross the edges. Eat the energy orbs and climb the leaderboard.</p>
+        <button class="primary" id="startBtn">PLAY GAME →</button>
+      </div>
+    </div>
+  </div>
+  <div class="hint"><span>SWIPE ANYWHERE TO STEER</span><span id="level">LEVEL 1</span></div>
+  <div class="actions">
+    <button class="quiet" id="restartBtn">↻ Restart</button>
+    <button class="quiet" id="soundBtn">♫ Sound: Off</button>
+  </div>
+  <div class="status" id="status">Connect the backend to enable the global leaderboard.</div>
+  <section class="leaderboard">
+    <div class="lb-head"><h2>GLOBAL LEADERBOARD</h2><span>TOP PLAYERS</span></div>
+    <div id="leaderboardRows"><div class="entry"><span class="rank">—</span><span class="player">Leaderboard not connected</span><span class="points">—</span></div></div>
+    <div class="notice">Scores are submitted when a run ends. Telegram login is required for verified player names.</div>
+  </section>
+</main>
+<script>
+(() => {
+  const CONFIG = {
+    // Paste your deployed Supabase Edge Function URL here, e.g.
+    // https://PROJECT.supabase.co/functions/v1/neon-snake
+    leaderboardUrl: "PASTE_YOUR_SUPABASE_FUNCTION_URL_HERE"
+  };
+  const tg = window.Telegram?.WebApp;
+  if (tg) { tg.ready(); tg.expand(); tg.setHeaderColor?.("#080c13"); tg.setBackgroundColor?.("#080c13"); }
+
+  const $ = id => document.getElementById(id);
+  const canvas = $("board"), ctx = canvas.getContext("2d");
+  const N = 24, CELL = 25;
+  const vectors = {up:{x:0,y:-1},down:{x:0,y:1},left:{x:-1,y:0},right:{x:1,y:0}};
+  let snake, food, dir, nextDir, score=0, best=0, running=false, paused=false, alive=true;
+  let timer=null, sound=false, audio=null, touchStart=null, lastTurn=0;
+  try { best = Number(localStorage.getItem("neonSnakeBest")) || 0; } catch {}
+  $("best").textContent = best;
+
+  function updateStats() {
+    $("score").textContent = score; $("best").textContent = best;
+    $("level").textContent = "LEVEL " + (1 + Math.floor(score / 5));
+  }
+  function spawnFood() {
+    do { food={x:Math.floor(Math.random()*N),y:Math.floor(Math.random()*N)}; }
+    while (snake.some(s=>s.x===food.x && s.y===food.y));
+  }
+  function reset() {
+    clearInterval(timer);
+    snake=[{x:8,y:12},{x:7,y:12},{x:6,y:12},{x:5,y:12}];
+    dir={x:1,y:0}; nextDir={...dir}; score=0;
+    alive=true; running=false; paused=false; spawnFood(); updateStats(); draw();
+  }
+  function beep(freq=500) {
+    if (!sound) return;
+    try {
+      audio=audio||new (window.AudioContext||window.webkitAudioContext)();
+      const o=audio.createOscillator(),g=audio.createGain();
+      o.connect(g);g.connect(audio.destination);o.frequency.value=freq;
+      g.gain.setValueAtTime(.04,audio.currentTime);
+      g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+.12);
+      o.start();o.stop(audio.currentTime+.12);
+    } catch {}
+  }
+  function steer(name) {
+    if (!running || paused || !alive) return;
+    const v=vectors[name];
+    if (v.x===-dir.x && v.y===-dir.y) return;
+    nextDir=v;
+  }
+  function start() {
+    if (!alive) reset();
+    paused=false;running=true;$("overlay").hidden=true;
+    $("pauseBtn").textContent="Ⅱ Pause";
+    clearInterval(timer);
+    timer=setInterval(tick,Math.max(65,145-score*2));
+  }
+  function pause() {
+    if (!running) return;
+    paused=!paused;
+    if (paused) {
+      clearInterval(timer);$("overlay").hidden=false;
+      $("overlayTitle").textContent="PAUSED";
+      $("overlayText").textContent="Your run is paused.";
+      $("startBtn").textContent="RESUME →";
+      $("pauseBtn").textContent="▶ Resume";
+    } else start();
+  }
+  function tick() {
+    if (!running || paused || !alive) return;
+    dir=nextDir;
+    const head={x:(snake[0].x+dir.x+N)%N,y:(snake[0].y+dir.y+N)%N};
+    if (snake.slice(0,-1).some(s=>s.x===head.x&&s.y===head.y)) { endGame(); return; }
+    snake.unshift(head);
+    if (head.x===food.x&&head.y===food.y) {
+      score++;beep(620);spawnFood();
+      if (score>best) { best=score; try{localStorage.setItem("neonSnakeBest",best);}catch{} }
+      updateStats();clearInterval(timer);timer=setInterval(tick,Math.max(65,145-score*2));
+    } else snake.pop();
+    draw();
+  }
+  function endGame() {
+    running=false;alive=false;clearInterval(timer);beep(130);
+    $("overlay").hidden=false;$("overlayTitle").textContent="GAME OVER";
+    $("overlayText").textContent="You scored "+score+" points. Submit your score and challenge your friends.";
+    $("startBtn").textContent="PLAY AGAIN →";
+    submitScore();
+  }
+  function rounded(x,y,w,h,r) { ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill(); }
+  function draw() {
+    ctx.clearRect(0,0,600,600);ctx.fillStyle="#090e16";ctx.fillRect(0,0,600,600);
+    ctx.strokeStyle="rgba(135,165,190,.075)";ctx.lineWidth=1;
+    for(let i=0;i<=N;i++){ctx.beginPath();ctx.moveTo(i*CELL,0);ctx.lineTo(i*CELL,600);ctx.stroke();ctx.beginPath();ctx.moveTo(0,i*CELL);ctx.lineTo(600,i*CELL);ctx.stroke();}
+    const fx=(food.x+.5)*CELL,fy=(food.y+.5)*CELL;
+    ctx.shadowColor="#ff527d";ctx.shadowBlur=25;ctx.fillStyle="#ff527d";
+    ctx.beginPath();ctx.arc(fx,fy,7,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+    ctx.fillStyle="#fff1f5";ctx.beginPath();ctx.arc(fx-2,fy-2,2,0,Math.PI*2);ctx.fill();
+    snake.forEach((s,i)=>{
+      const p=i===0?2:3,x=s.x*CELL+p,y=s.y*CELL+p,w=CELL-p*2;
+      ctx.shadowColor="#9aff63";ctx.shadowBlur=i===0?18:7;
+      ctx.fillStyle=i===0?"#c8ff83":`rgb(${Math.round(65+i*.4)},${Math.round(225-i*1.1)},${Math.round(80-i*.3)})`;
+      rounded(x,y,w,w,i===0?9:7);ctx.shadowBlur=0;
+      if(i===0){ctx.fillStyle="#14210e";if(dir.x){const ex=x+(dir.x>0?14:4);ctx.fillRect(ex,y+5,4,4);ctx.fillRect(ex,y+14,4,4);}else{const ey=y+(dir.y>0?14:4);ctx.fillRect(x+5,ey,4,4);ctx.fillRect(x+14,ey,4,4);}}
+    });
+  }
+  function point(e) {
+    const r=canvas.getBoundingClientRect();
+    return {x:(e.clientX-r.left)/r.width*600,y:(e.clientY-r.top)/r.height*600};
+  }
+  canvas.style.touchAction="none";
+  canvas.addEventListener("pointerdown",e=>{
+    e.preventDefault();const p=point(e);touchStart={x:p.x,y:p.y,id:e.pointerId};
+    try{canvas.setPointerCapture(e.pointerId);}catch{}
+  },{passive:false});
+  canvas.addEventListener("pointerup",e=>{
+    if(!touchStart||touchStart.id!==e.pointerId)return;
+    e.preventDefault();const p=point(e),dx=p.x-touchStart.x,dy=p.y-touchStart.y;touchStart=null;
+    if(Math.max(Math.abs(dx),Math.abs(dy))<12)return;
+    const now=Date.now();if(now-lastTurn<35)return;lastTurn=now;
+    steer(Math.abs(dx)>Math.abs(dy)?(dx>0?"right":"left"):(dy>0?"down":"up"));
+  },{passive:false});
+  canvas.addEventListener("pointercancel",()=>touchStart=null);
+  canvas.addEventListener("contextmenu",e=>e.preventDefault());
+  window.addEventListener("keydown",e=>{
+    const map={ArrowUp:"up",ArrowDown:"down",ArrowLeft:"left",ArrowRight:"right",w:"up",s:"down",a:"left",d:"right"};
+    if(map[e.key]){e.preventDefault();steer(map[e.key]);}
+    if(e.code==="Space"){e.preventDefault();if(!running||paused)start();else pause();}
+  });
+  $("startBtn").onclick=()=>{if(paused)start();else{reset();start();}};
+  $("pauseBtn").onclick=pause;
+  $("restartBtn").onclick=()=>{
+    reset();$("overlay").hidden=false;$("overlayTitle").innerHTML='SNAKE<span style="color:#b8ff65">.</span>';
+    $("overlayText").textContent="Swipe to steer. Cross the edges. Eat the energy orbs.";
+    $("startBtn").textContent="PLAY GAME →";
+  };
+  $("soundBtn").onclick=()=>{sound=!sound;$("soundBtn").textContent="♫ Sound: "+(sound?"On":"Off");beep(500);};
+
+  function telegramInitData() { return tg?.initData || ""; }
+  async function api(action,extra={}) {
+    if(!CONFIG.leaderboardUrl.startsWith("https://")) throw new Error("Leaderboard backend is not configured yet.");
+    const res=await fetch(CONFIG.leaderboardUrl,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action,initData:telegramInitData(),...extra})});
+    const data=await res.json();if(!res.ok)throw new Error(data.error||"Request failed");return data;
+  }
+  async function submitScore() {
+    if(!tg?.initData){$("status").textContent="Open this game through your Telegram bot to submit scores.";return;}
+    $("status").textContent="Submitting your score…";
+    try {const result=await api("submit",{score});$("status").textContent=result.message||"Score submitted.";await loadLeaderboard();}
+    catch(e){$("status").textContent=e.message;}
+  }
+  async function loadLeaderboard() {
+    try {
+      const result=await api("leaderboard");
+      const rows=$("leaderboardRows");rows.replaceChildren();
+      if(!result.players?.length){rows.textContent="No scores yet. Be the first!";return;}
+      result.players.forEach((p,i)=>{
+        const row=document.createElement("div");row.className="entry";
+        const rank=document.createElement("span");rank.className="rank";rank.textContent="#"+(i+1);
+        const name=document.createElement("span");name.className="player";name.textContent=p.display_name||"Player";
+        const points=document.createElement("span");points.className="points";points.textContent=p.best_score;
+        row.append(rank,name,points);rows.append(row);
+      });
+    } catch(e) { $("status").textContent=e.message; }
+  }
+  reset();
+  if(tg?.initData)loadLeaderboard();
+})();
+</script>
+</body>
+</html>

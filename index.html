@@ -7,7 +7,8 @@
   <title>Neon Snake</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
-    :root{color-scheme:dark;--lime:#b8ff65;--muted:#9aa7b7;--panel:#111a25;--panel-2:#101822;--screen:#080c13;--edge:#263342;--danger:#ff527d;--shadow:rgba(154,255,99,.25)}
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+    :root{color-scheme:dark;--lime:#b8ff65;--muted:#9aa7b7;--panel:#111a25;--panel-2:#101822;--screen:#080c13;--edge:#263342;--danger:#ff527d;--shadow:rgba(154,255,99,.25);--retro-1:#ff4d9d;--retro-2:#ffb703;--retro-3:#7ef9ff;--retro-4:#7dff61;--retro-5:#9d7bff;--retro-6:#ff7b54}
     *{box-sizing:border-box}
     html,body{margin:0;background:var(--screen);color:#f3f6f8;font-family:Inter,system-ui,Arial,sans-serif;min-height:100vh}
     body{display:flex;justify-content:center}
@@ -19,6 +20,24 @@
     .primary{background:var(--lime);color:#11190b;padding:13px 25px;box-shadow:0 10px 24px rgba(184,255,101,.25)}
     .brand{font-size:12px;letter-spacing:2px;font-weight:800;color:var(--lime)}
     .sub{font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:3px}
+    .retro-header{position:relative;width:min(100%, 560px);margin:18px auto 8px;padding:14px 12px 10px;text-align:center;z-index:2}
+    .retro-header::before{content:"";position:absolute;inset:6px 0 auto;display:block;height:calc(100% - 10px);border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(0,0,0,0));border:1px solid rgba(255,255,255,.05);pointer-events:none}
+    .retro-title{position:relative;margin:0;display:flex;flex-wrap:wrap;justify-content:center;gap:10px 14px;line-height:1.15;text-transform:uppercase;font-family:'Press Start 2P', monospace;font-size:clamp(1rem, 2.7vw, 2.2rem);letter-spacing:0.08em;filter:drop-shadow(0 3px 0 rgba(0,0,0,.7));}
+    .retro-title .rainbow{display:inline-block;padding:8px 10px;border-radius:8px;position:relative;background:linear-gradient(90deg,var(--retro-1),var(--retro-2),var(--retro-3),var(--retro-4),var(--retro-5),var(--retro-6));-webkit-background-clip:text;background-clip:text;color:transparent;animation:rainbowShift 4s linear infinite;background-size:200% 100%;text-shadow:0 0 18px rgba(255,255,255,.3), 0 4px 0 rgba(0,0,0,.8);}
+    .retro-title .rainbow::before{content:attr(data-text);position:absolute;inset:0;z-index:-1;color:rgba(0,0,0,.7);transform:translate(4px,4px);filter:blur(0);text-shadow:0 0 10px rgba(0,0,0,.8);}
+    .retro-title .rainbow:nth-child(2){animation-delay:.25s}
+    .retro-title .rainbow:nth-child(3){animation-delay:.5s}
+    .retro-subtitle{margin-top:16px;font-family:'Press Start 2P', monospace;font-size:clamp(.5rem, 1.85vw, .8rem);letter-spacing:.12em;color:#fdf7ff;text-transform:uppercase;opacity:.9;text-shadow:0 0 14px rgba(155,255,195,.35), 0 2px 0 rgba(0,0,0,.7)}
+    .pixel-star{position:absolute;width:8px;height:8px;background:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.3);transform:rotate(45deg);animation:twinkle 1.7s ease-in-out infinite alternate;opacity:.9}
+    .pixel-star:before,.pixel-star:after{content:"";position:absolute;background:inherit;}
+    .pixel-star:before{inset:-3px 0 0 0;background:transparent;box-shadow:0 0 0 1px rgba(255,255,255,.18)}
+    .pixel-star:nth-child(1){left:10%;top:10%;background:#fffc7a;animation-delay:.2s}
+    .pixel-star:nth-child(2){right:14%;top:20%;background:#7ef9ff;animation-delay:.7s}
+    .pixel-star:nth-child(3){left:18%;bottom:25%;background:#ff7b54;animation-delay:1.2s}
+    .pixel-star:nth-child(4){right:18%;bottom:18%;background:#9d7bff;animation-delay:.9s}
+    .pixel-star:nth-child(5){left:50%;top:4%;background:#7dff61;animation-delay:1.5s}
+    @keyframes rainbowShift{0%{filter:hue-rotate(0deg) brightness(1)}25%{filter:hue-rotate(30deg) brightness(1.1)}50%{filter:hue-rotate(90deg) brightness(1.2)}75%{filter:hue-rotate(160deg) brightness(1.1)}100%{filter:hue-rotate(220deg) brightness(1)}}
+    @keyframes twinkle{0%{transform:rotate(45deg) scale(.75);opacity:.4}100%{transform:rotate(45deg) scale(1.2);opacity:1}}
     .welcome-screen{position:fixed;inset:0;display:grid;place-items:center;background:radial-gradient(circle at top,#102130 0%,#09131d 42%,#080c13 100%);padding:22px;z-index:20}
     .welcome-screen[hidden]{display:none}
     .welcome-card{width:min(100%,420px);background:rgba(15,21,31,.96);border:1px solid var(--edge);border-radius:26px;padding:26px 20px 22px;box-shadow:0 30px 80px rgba(0,0,0,.45)}
@@ -64,10 +83,31 @@
     .points{font-weight:800;font-variant-numeric:tabular-nums}
     .notice{font-size:11px;color:var(--muted);line-height:1.5;text-align:center;margin-top:12px}
     .status{font-size:11px;color:var(--muted);min-height:17px;text-align:center;margin-top:10px}
+    @media(max-width:420px){
+      .retro-header{margin-top:12px;padding-top:8px}
+      .retro-title{gap:6px 8px}
+      .retro-title .rainbow{padding:6px 7px;letter-spacing:0.04em}
+      .retro-subtitle{margin-top:12px;letter-spacing:.08em}
+      .pixel-star{transform:scale(.8) rotate(45deg)}
+    }
     @media(min-width:520px){main{padding-top:25px}}
   </style>
 </head>
 <body>
+  <div class="retro-header" aria-label="Retro title heading">
+    <span class="pixel-star" aria-hidden="true"></span>
+    <span class="pixel-star" aria-hidden="true"></span>
+    <span class="pixel-star" aria-hidden="true"></span>
+    <span class="pixel-star" aria-hidden="true"></span>
+    <span class="pixel-star" aria-hidden="true"></span>
+    <h1 class="retro-title" aria-label="MANI IS GAY">
+      <span class="rainbow" data-text="MANI">MANI</span>
+      <span class="rainbow" data-text="IS">IS</span>
+      <span class="rainbow" data-text="GAY">GAY</span>
+    </h1>
+    <div class="retro-subtitle">NEON SNAKE ARCADE</div>
+  </div>
+
   <main>
     <section class="welcome-screen" id="welcomeScreen" aria-live="polite">
       <div class="welcome-card">
@@ -185,11 +225,6 @@
     $("status").textContent = "Player name saved: " + clean;
     showGame();
     return true;
-  }
-
-  function changeName() {
-    showWelcome();
-    $("status").textContent = "Choose a new player name.";
   }
 
   $("welcomeStartBtn").onclick = () => savePlayerName(welcomeName.value);
@@ -374,12 +409,10 @@
 
   $("welcomeChangeNameBtn").onclick = () => {
     playerName = "";
-    savePlayerName("");
     showWelcome();
     $("status").textContent = "Choose a new player name.";
   };
 
-  // The game must remain hidden until a valid player name exists.
   if (playerName) {
     showGame();
     reset();
